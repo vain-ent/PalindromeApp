@@ -1,0 +1,150 @@
+import java.util.Scanner;
+
+public class UseCase8PalindromeCheckerApp {
+
+    // Node class for Singly Linked List
+    static class Node {
+        char data;
+        Node next;
+
+        Node(char data) {
+            this.data = data;
+            this.next = null;
+        }
+    }
+
+    // Method to convert string to linked list and return head
+    static Node convertToLinkedList(String str) {
+        if (str == null || str.isEmpty()) return null;
+
+        Node head = new Node(str.charAt(0));
+        Node current = head;
+
+        for (int i = 1; i < str.length(); i++) {
+            current.next = new Node(str.charAt(i));
+            current = current.next;
+        }
+
+        return head;
+    }
+
+    // Method to find the middle node using fast and slow pointer technique
+    static Node findMiddle(Node head) {
+        if (head == null) return null;
+
+        Node slow = head;
+        Node fast = head;
+
+        while (fast.next != null && fast.next.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+
+        return slow; // slow is at the middle
+    }
+
+    // Method to reverse a linked list in-place
+    static Node reverseList(Node head) {
+        Node prev = null;
+        Node current = head;
+
+        while (current != null) {
+            Node nextNode = current.next;
+            current.next = prev;
+            prev = current;
+            current = nextNode;
+        }
+
+        return prev; // new head of reversed list
+    }
+
+    // Method to check if linked list represents a palindrome
+    static boolean isPalindrome(Node head) {
+        if (head == null || head.next == null) return true;
+
+        // Step 1: Find the middle of the linked list
+        Node middle = findMiddle(head);
+
+        // Step 2: Reverse the second half
+        Node secondHalfHead = reverseList(middle.next);
+
+        // Step 3: Compare the two halves
+        Node firstHalf = head;
+        Node secondHalf = secondHalfHead;
+        boolean result = true;
+
+        while (secondHalf != null) {
+            if (firstHalf.data != secondHalf.data) {
+                result = false;
+                break;
+            }
+            firstHalf = firstHalf.next;
+            secondHalf = secondHalf.next;
+        }
+
+        // Optional: Restore the list (reverse second half back)
+        middle.next = reverseList(secondHalfHead);
+
+        return result;
+    }
+
+    // Method to print the linked list
+    static void printLinkedList(Node head) {
+        Node current = head;
+        System.out.print("Linked List: ");
+        while (current != null) {
+            System.out.print(current.data);
+            if (current.next != null) System.out.print(" -> ");
+            current = current.next;
+        }
+        System.out.println();
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("===========================================");
+        System.out.println("  UC8: Linked List Based Palindrome Checker");
+        System.out.println("===========================================");
+
+        while (true) {
+            System.out.print("\nEnter a string to check (or 'exit' to quit): ");
+            String input = scanner.nextLine().trim();
+
+            if (input.equalsIgnoreCase("exit")) {
+                System.out.println("Exiting... Goodbye!");
+                break;
+            }
+
+            if (input.isEmpty()) {
+                System.out.println("Input cannot be empty. Please try again.");
+                continue;
+            }
+
+            // Normalize: convert to lowercase and remove non-alphanumeric characters
+            String cleaned = input.toLowerCase().replaceAll("[^a-z0-9]", "");
+
+            if (cleaned.isEmpty()) {
+                System.out.println("No valid characters found after cleaning.");
+                continue;
+            }
+
+            System.out.println("\nOriginal Input  : " + input);
+            System.out.println("Cleaned String  : " + cleaned);
+
+            // Step 1: Convert string to linked list
+            Node head = convertToLinkedList(cleaned);
+
+            // Step 2: Print the linked list
+            printLinkedList(head);
+
+            // Step 3: Check palindrome using linked list approach
+            boolean result = isPalindrome(head);
+
+            System.out.println("Is Palindrome?  : " + (result ? "YES ✓" : "NO ✗"));
+            System.out.println("-------------------------------------------");
+        }
+
+        scanner.close();
+    }
+}
